@@ -43,9 +43,9 @@ var stats = {}
 var velocity = Vector2.ZERO
 var target = Vector2.ZERO
 
-var roam_radius = 150.0
-var slow_radius = 15.0
-var arrive_distance = 70.0
+var roam_radius = 150
+var slow_radius = 15
+var arrive_distance = 70
 var follow = false
 
 

@@ -4,10 +4,10 @@
 [ext_resource path="res://icon.png" type="Texture" id=2]
 
 [sub_resource type="CircleShape2D" id=1]
-radius = 139.853
+radius = 140.0
 
 [sub_resource type="CircleShape2D" id=2]
-radius = 297.601
+radius = 300.0
 
 [node name="Mob" type="Area2D"]
 script = ExtResource( 1 )
