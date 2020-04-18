@@ -1,8 +1,15 @@
 class_name NPC
 extends KinematicBody2D
 
+var Slogan = [
+	"Eggs", #placeholder
+	"Milk",
+	"Bread"
+]
+
 enum Type {
 	INSTIGATOR,
+	PAWN,
 	DEMIHUMAN, # Can break down barricades.
 	CLERIC, # Increase mob cohesion.
 	ELF, # Increase mob agility.
@@ -14,8 +21,12 @@ enum Type {
 }
 
 # Dictionary for any stats that may vary from NPC to NPC.
-export var stats = {"speed": 100, "type": Type.INSTIGATOR}
 var in_mob = false
+export var stats = {
+	"speed" : 100,
+	"type" : Type.PAWN,
+	"commitment" : 0 #0 not committed 100 fully commited
+}
 
 # Current velocity of the NPC, used to move the NPC during _physics_process.
 # To manually move the NPC, set this instead of calling a move function directly.
@@ -29,7 +40,8 @@ func _ready():
 	# time the script is restarted, unless we call this function to
 	# generate a time-based seed.
 	randomize()
-	
+	#generate random slogans that the npc will react to
+	stats.trigger_slogans = [Slogan[randi()%len(Slogan)-1], Slogan[randi()%len(Slogan)-1]]
 	# When MoveTimer is triggered, the NPC should start moving.
 	# warning-ignore-all:return_value_discarded
 	$MoveTimer.connect("timeout", self, "start_move")
@@ -38,11 +50,13 @@ func _ready():
 	# Each timer should start the other so the NPC alternates between moving and standing still.
 	$MoveTimer.connect("timeout", $WaitTimer, "start")
 	$WaitTimer.connect("timeout", $MoveTimer, "start")
-	
+
 	# Randomise the timers.
 	$MoveTimer.wait_time = rand_range(0.0, 2.0)
 	$WaitTimer.wait_time = rand_range(0.0, 2.0)
-
+	if stats.type == Type.INSTIGATOR:
+		stats.commitment = 100
+		join_mob();
 
 func _physics_process(_delta):
 	# Move the NPC by whatever the velocity was set to in other functions.
@@ -57,9 +71,6 @@ func _physics_process(_delta):
 		stats.speed) #add mass for dragging
 	
 	move_and_slide(velocity)
-	
-	#if stats.type == Type.INSTIGATOR: #this should not be in a process
-	#	join_mob();
 
 
 func _process(_delta):
@@ -79,8 +90,12 @@ func get_mob():
 	var mob = get_node("../Mob")
 	return mob
 
-
+#should only be called if stats.in_mob false
 func react(message, mob):
+	if stats.trigger_slogans.find(message):
+		stats.commitment += 1
+	if stats.commitment > 10:
+		join_mob()
 	# Receive message from chant and decide if joining mob.
 	#mock code to join always and test following
 	join_mob()
@@ -95,11 +110,6 @@ func join_mob():
 # Call to make the NPC leave the mob.
 func leave_mob():
 	self.in_mob = false
-
-
-# Call to make the NPC consider joining the mob.
-func consider_joining_mob():
-	pass
 
 
 func start_move():
