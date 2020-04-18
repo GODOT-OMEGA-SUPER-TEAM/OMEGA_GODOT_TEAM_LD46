@@ -1,7 +1,7 @@
 class_name NPC
 extends KinematicBody2D
 
-var Slogan [
+var Slogan = [
 	"Eggs", #placeholder
 	"Milk",
 	"Bread"
@@ -23,7 +23,7 @@ enum Type {
 # Dictionary for any stats that may vary from NPC to NPC.
 export var stats = {
 	"speed" : 100,
-	"type" : Type.pawn,
+	"type" : Type.PAWN,
 	"in_mob" : false,
 	"commitment" : 0 #0 not committed 100 fully commited
 }
