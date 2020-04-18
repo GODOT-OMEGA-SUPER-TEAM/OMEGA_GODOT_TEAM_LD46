@@ -34,6 +34,7 @@ var speed = 25
 var type = Type.PAWN
 var commitment = 0
 var trigger_slogans = []
+var attack_range = 60
 
 # Dictionary for any stats that may vary from NPC to NPC.
 var stats = {}
@@ -61,6 +62,9 @@ func _ready():
 	$MoveTimer.connect("timeout", self, "start_move")
 	# When WaitTimer is triggered, the NPC should stop moving.
 	$WaitTimer.connect("timeout", self, "stop_move")
+	#when the  AttackTimer triggered check for enemeies in range and attack if can
+	$AttackTimer.connect("timeout", self, "_on_attack_timer")
+	$Attack.connect("body_entered", self, "_on_body_entered")
 	# Each timer should start the other so the NPC alternates between moving and standing still.
 	$MoveTimer.connect("timeout", $WaitTimer, "start")
 	$WaitTimer.connect("timeout", $MoveTimer, "start")
@@ -68,6 +72,7 @@ func _ready():
 	# Randomise the timers.
 	$MoveTimer.wait_time = rand_range(0.0, 2.0)
 	$WaitTimer.wait_time = rand_range(0.0, 2.0)
+	$AttackTimer.wait_time = rand_range(0.0, 2.0)
 
 	# Set states for type overriding defaults.
 	set_stats(type_stats[type])
@@ -114,14 +119,11 @@ func get_mob():
 
 
 # Should only be called if in_mob is false.
+# Receive message from chant and decide if joining mob
 func react(message, mob):
 	if trigger_slogans.find(message):
 		commitment += 1
-	if commitment > 10:
-		join_mob()
-	# Receive message from chant and decide if joining mob.
-	# Mock code to join always and test following.
-	join_mob()
+	test_commitment()
 
 
 # Call to make the NPC join the mob.
@@ -168,7 +170,27 @@ func attack_angle(angle):
 # For example, attack_vector(Vector2.RIGHT) begins a right-facing attack.
 func attack_vector(direction):
 	attack_angle(atan2(direction.y, direction.x))
+	
+func _on_attack_timer():
+	#enable physics
+	$Attack.set_physics_process(true)
+	$AttackTimer.wait_time = rand_range(1.0, 2.0)
 
+func _on_body_entered(body):
+	if in_mob != body.in_mob:
+		attack_vector((position - body.position).normalized())
+		body._on_attacked(10) #use specific npc damage
+	$Attack.set_physics_process(false)
+	
+func _on_attacked(damage):
+	commitment -= damage
+	test_commitment()
+	
+func test_commitment():
+	if in_mob and commitment < 10:
+		leave_mob()
+	elif !in_mob and commitment >= 10:
+		join_mob()
 
 func buff(buff_range):
 	pass
