@@ -38,7 +38,9 @@ tracks/1/keys = {
 "values": [ false, true ]
 }
 
-[node name="NPC" type="KinematicBody2D"]
+[node name="NPC" type="KinematicBody2D" groups=[
+"npc",
+]]
 script = ExtResource( 1 )
 
 [node name="TempSprite" type="Line2D" parent="."]
