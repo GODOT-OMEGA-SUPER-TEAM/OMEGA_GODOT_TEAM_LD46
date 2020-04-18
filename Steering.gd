@@ -1,8 +1,8 @@
 extends Node
 
-const DEFAULT_MASS: = 2.0
-const DEFAULT_MAX_SPEED: = 400.0
-const DEFAULT_SLOW_RADIUS: = 50.0
+const DEFAULT_MASS := 2.0
+const DEFAULT_MAX_SPEED := 400.0
+const DEFAULT_SLOW_RADIUS := 50.0
 
 static func follow(
 		velocity: Vector2,
@@ -12,8 +12,8 @@ static func follow(
 		mass := DEFAULT_MASS
 ) -> Vector2:
 	
-	var desired_velocity: = (target_position - global_position).normalized() * max_speed
-	var steering: = (desired_velocity - velocity) / mass
+	var desired_velocity := (target_position - global_position).normalized() * max_speed
+	var steering := (desired_velocity - velocity) / mass
 	return velocity + steering
 
 
@@ -34,11 +34,13 @@ static func arrive_to(
 
 
 static func direction_4_way(angle: float) -> String:
-	var dir: = "right"
-	if angle >= 0.5 && angle < 2.5:
-		dir = "down"
-	elif angle >= 2.5 || angle < -2.5:
-		dir = "left"
-	elif angle <-0.5 && angle >= -2.5:
-		dir = "up"
-	return dir
+	angle = fposmod(angle, TAU)
+	if angle < TAU * 1 / 8:
+		return "right"
+	if angle < TAU * 3 / 8:
+		return "down"
+	if angle < TAU * 5 / 8:
+		return "left"
+	if angle < TAU * 7 / 8:
+		return "up"
+	return "right"

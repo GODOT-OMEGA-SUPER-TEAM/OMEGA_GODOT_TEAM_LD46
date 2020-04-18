@@ -3,6 +3,8 @@ extends Node2D
 func _ready():
 	# Thinking of an instagator as a NPC type that is always a mob member (there should only be one).
 	add_npc(Vector2(100, 100), NPC.Type.INSTIGATOR)
+	add_npc(Vector2(100, 200), NPC.Type.INSTIGATOR)
+	add_npc(Vector2(100, 300), NPC.Type.INSTIGATOR)
 	generate_random_npcs(10)
 
 

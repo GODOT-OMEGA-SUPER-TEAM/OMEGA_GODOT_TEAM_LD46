@@ -1,12 +1,6 @@
 class_name NPC
 extends KinematicBody2D
 
-var Slogan = [
-	"Eggs", #placeholder
-	"Milk",
-	"Bread"
-]
-
 enum Type {
 	INSTIGATOR,
 	PAWN,
@@ -17,31 +11,51 @@ enum Type {
 	SORCERER, # Wall spell to block knights.
 	# Wizard(male) witch(female) sorcerer(agnostic)
 	# Keep types agnostic
-	# Define stats for each?
 }
 
-# Dictionary for any stats that may vary from NPC to NPC.
-var in_mob = false
-export var stats = {
-	"speed" : 100,
-	"type" : Type.PAWN,
-	"commitment" : 0 #0 not committed 100 fully commited
+var Slogan = [
+	"Eggs", #placeholder
+	"Milk",
+	"Bread"
+]
+
+var type_stats = {
+	Type.INSTIGATOR : {"speed" : 100, "commitment" : 100, "in_mob" : true},
+	Type.PAWN : {"speed" : 50},
+	Type.DEMIHUMAN : {"speed" : 100},
+	Type.CLERIC : {"speed" : 100},
+	Type.ELF : {"speed" : 100},
+	Type.ALCHEMIST : {"speed" : 100},
+	Type.SORCERER : {"speed" : 100},
 }
+
+var in_mob = false
+var speed = 100
+var type = Type.PAWN
+var commitment = 0
+var trigger_slogans = []
+
+# Dictionary for any stats that may vary from NPC to NPC.
+var stats = {}
 
 # Current velocity of the NPC, used to move the NPC during _physics_process.
 # To manually move the NPC, set this instead of calling a move function directly.
 var velocity = Vector2.ZERO
 var target = Vector2.ZERO
-var roam_radius = 80.0
+
+var roam_radius = 150.0
 var slow_radius = 15.0
+var arrive_distance = 70.0
+var follow = false
+
 
 func _ready():
 	# Random number generation will always result in the same values each
 	# time the script is restarted, unless we call this function to
 	# generate a time-based seed.
 	randomize()
-	#generate random slogans that the npc will react to
-	stats.trigger_slogans = [Slogan[randi()%len(Slogan)-1], Slogan[randi()%len(Slogan)-1]]
+	# Generate random slogans that the npc will react to.
+	trigger_slogans = [Slogan[randi() % len(Slogan) - 1], Slogan[randi() % len(Slogan) - 1]]
 	# When MoveTimer is triggered, the NPC should start moving.
 	# warning-ignore-all:return_value_discarded
 	$MoveTimer.connect("timeout", self, "start_move")
@@ -54,58 +68,71 @@ func _ready():
 	# Randomise the timers.
 	$MoveTimer.wait_time = rand_range(0.0, 2.0)
 	$WaitTimer.wait_time = rand_range(0.0, 2.0)
-	if stats.type == Type.INSTIGATOR:
-		stats.commitment = 100
-		join_mob();
 
+	# Set states for type overriding defaults.
+	set_stats(type_stats[type])
+
+
+# Move the NPC by whatever the velocity was set to in other functions.
 func _physics_process(_delta):
-	# Move the NPC by whatever the velocity was set to in other functions.
-	
 	if in_mob:
 		target = get_mob().global_position
-		
+
 	velocity = Steering.arrive_to(
 		velocity,
 		global_position,
 		target,
-		stats.speed) #add mass for dragging
-	
+		speed) # Add mass for dragging.
+
 	move_and_slide(velocity)
+	if not in_mob:
+		return
+	
+	if global_position.distance_to(target) < arrive_distance and not follow:
+		set_physics_process(false)
+		# Set up timer and wander when not in_mob or for in_mob but with distance to mob larger than x.
 
 
-func _process(_delta):
-	pass
+func set_stats(stats):
+	for stat in stats:
+		self[stat] = stats[stat]
+
 
 func _follow_mob():
-	print("NPC moves")
+	follow = true
 	set_physics_process(true)
 
+
 func _unfollow_mob():
-	#check in which range it is, it may wander in a given radius
-	print("NPC stopped")
-	#do not stop immediately, try to reach inner circle (need radius)
-	set_physics_process(false)
+	# Check in which range it is, it may wander in a given radius.
+	follow = false
+
 
 func get_mob():
 	var mob = get_node("../Mob")
 	return mob
 
-#should only be called if stats.in_mob false
+
+# Should only be called if in_mob is false.
 func react(message, mob):
-	if stats.trigger_slogans.find(message):
-		stats.commitment += 1
-	if stats.commitment > 10:
+	if trigger_slogans.find(message):
+		commitment += 1
+	if commitment > 10:
 		join_mob()
 	# Receive message from chant and decide if joining mob.
-	#mock code to join always and test following
+	# Mock code to join always and test following.
 	join_mob()
-	pass
+
 
 # Call to make the NPC join the mob.
 func join_mob():
 	#Global.get_mob().gain_member(self);
+	if in_mob:
+		return
+
 	get_mob().gain_member(self);
 	self.in_mob = true
+
 
 # Call to make the NPC leave the mob.
 func leave_mob():
@@ -116,9 +143,9 @@ func start_move():
 	$WaitTimer.wait_time = rand_range(0.0, 2.0)
 	if self.in_mob:
 		return
-	
+
 	randomize()
-	var random_angle = randf() * 2 * PI
+	var random_angle = randf() * TAU
 	randomize()
 	var random_radius = (randf() * roam_radius) / 2 + roam_radius / 2
 	target = global_position + Vector2(cos(random_angle) * random_radius, sin(random_angle) * random_radius)

@@ -27,23 +27,6 @@ func _ready():
 
 # MOVEMENT 
 
-func _unhandled_input(event):
-	# Mouse steering.
-	if event is InputEventMouseButton:
-		if event.pressed: #follow cursor.
-			track_cursor = true
-			set_process(true)
-			emit_signal("mob_started_movement")
-		if event.is_action_released('click'): # Reach click point.
-			# A target object may be placed on map upon mouse release.
-			track_cursor = false
-			target_position = get_global_mouse_position() # GUI will add target on objective.
-			set_process(true)
-	
-	if event.is_action_pressed("secondary_click"): #just for test
-		chant('Join the protest') #message should bring some info to make the NPC decide
-
-
 func _process(delta):
 	if track_cursor:
 		target_position = get_global_mouse_position()
@@ -62,8 +45,24 @@ func _process(delta):
 		slow_radius)
 	
 	self.position += _velocity * delta
-	#print(self.position)
+
+
+func _unhandled_input(event):
+	# Mouse steering.
+	if event is InputEventMouseButton:
+		if event.pressed: # Follow cursor.
+			track_cursor = true
+			set_process(true)
+			emit_signal("mob_started_movement")
+		if event.is_action_released("click"): # Reach click point.
+			# A target object may be placed on map upon mouse release.
+			track_cursor = false
+			target_position = get_global_mouse_position() # GUI will add target on objective.
+			set_process(true)
 	
+	if event.is_action_pressed("secondary_click"): # Just for test.
+		chant("Join the protest") # Message should bring some info to make the NPC decide.
+
 # GROUP
 
 func chant(message):
@@ -71,28 +70,26 @@ func chant(message):
 	for body in nearby_bodies:
 		if body.is_in_group("npc"):
 			body.react(message, self)
-	# For npc in bodies in ChantArea call.
-	pass
+	# For NPC in bodies in ChantArea call.
+
 
 func gain_member(npc):
 	members.append(npc)
+	# warning-ignore-all:return_value_discarded
 	connect("mob_started_movement", npc, "_follow_mob")
 	connect("mob_stopped_movement", npc, "_unfollow_mob")
 	print("Mob has %s members" % [members.size()])
 
 
 func lose_member(npc):
-	#remove from array
 	disconnect("mob_started_movement", npc, "_follow_mob")
 	disconnect("mob_stopped_movement", npc, "_unfollow_mob")
-	pass
 
 
 # Changes the mobs state and acts accordingly.
 func change_state(new_state):
 	if state == "idle":
 		pass
-	pass
 
 
 # Trigger a npc to execute a random action?
