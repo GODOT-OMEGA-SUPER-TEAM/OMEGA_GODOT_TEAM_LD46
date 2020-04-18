@@ -1,14 +1,15 @@
 class_name NPC
 extends KinematicBody2D
 
-enum Slogan {
-	eggs,
-	milk,
-	bread
-}
+var Slogan [
+	"Eggs", #placeholder
+	"Milk",
+	"Bread"
+]
 
 enum Type {
 	INSTIGATOR,
+	PAWN,
 	DEMIHUMAN, # Can break down barricades.
 	CLERIC, # Increase mob cohesion.
 	ELF, # Increase mob agility.
@@ -21,10 +22,10 @@ enum Type {
 
 # Dictionary for any stats that may vary from NPC to NPC.
 export var stats = {
-	"speed": 100, 
-	"type": Type.INSTIGATOR, 
-	"in_mob": false, 
-	"commitment": 0 #0 not committed 100 fully commited
+	"speed" : 100,
+	"type" : Type.pawn,
+	"in_mob" : false,
+	"commitment" : 0 #0 not committed 100 fully commited
 }
 
 # Current velocity of the NPC, used to move the NPC during _physics_process.
@@ -37,7 +38,7 @@ func _ready():
 	# generate a time-based seed.
 	randomize()
 	#generate random slogans that the npc will react to
-	stats.trigger_slogans = [Slogan.keys()[randi()%len(Slogan.keys())-1], Slogan.keys()[randi()%len(Slogan.keys())-1]]
+	stats.trigger_slogans = [Slogan[randi()%len(Slogan)-1], Slogan[randi()%len(Slogan)-1]]
 	# When MoveTimer is triggered, the NPC should start moving.
 	# warning-ignore-all:return_value_discarded
 	$MoveTimer.connect("timeout", self, "start_move")
@@ -46,17 +47,17 @@ func _ready():
 	# Each timer should start the other so the NPC alternates between moving and standing still.
 	$MoveTimer.connect("timeout", $WaitTimer, "start")
 	$WaitTimer.connect("timeout", $MoveTimer, "start")
-	
+
 	# Randomise the timers.
 	$MoveTimer.wait_time = rand_range(0.0, 2.0)
 	$WaitTimer.wait_time = rand_range(0.0, 2.0)
-
+	if stats.type == Type.INSTIGATOR:
+		stats.commitment = 100
+		join_mob();
 
 func _physics_process(_delta):
 	# Move the NPC by whatever the velocity was set to in other functions.
 	move_and_slide(velocity)
-	if stats.type == Type.INSTIGATOR:
-		join_mob();
 
 
 func _process(_delta):
