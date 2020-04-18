@@ -32,10 +32,12 @@ export var stats = {
 # To manually move the NPC, set this instead of calling a move function directly.
 var velocity = Vector2.ZERO
 var target = Vector2.ZERO
+
 var roam_radius = 150.0
 var slow_radius = 15.0
 var arrive_distance = 70.0
 var follow = false
+
 
 func _ready():
 	# Random number generation will always result in the same values each
@@ -91,6 +93,7 @@ func _unfollow_mob():
 	#check in which range it is, it may wander in a given radius
 	follow = false
 
+
 func get_mob():
 	var mob = get_node("../Mob")
 	return mob
@@ -111,6 +114,7 @@ func join_mob():
 	#Global.get_mob().gain_member(self);
 	if in_mob:
 		return
+
 	get_mob().gain_member(self);
 	self.in_mob = true
 
