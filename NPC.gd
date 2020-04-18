@@ -34,7 +34,7 @@ var velocity = Vector2.ZERO
 var target = Vector2.ZERO
 var roam_radius = 150.0
 var slow_radius = 15.0
-var arrive_distance = 30.0
+var arrive_distance = 70.0
 var follow = false
 
 func _ready():
@@ -84,13 +84,11 @@ func _process(_delta):
 	pass
 
 func _follow_mob():
-	print("NPC moves")
 	follow = true
 	set_physics_process(true)
 
 func _unfollow_mob():
 	#check in which range it is, it may wander in a given radius
-	print("NPC stopped")
 	follow = false
 
 func get_mob():
