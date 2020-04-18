@@ -1,6 +1,12 @@
 class_name NPC
 extends KinematicBody2D
 
+enum Slogan {
+	eggs,
+	milk,
+	bread
+}
+
 enum Type {
 	INSTIGATOR,
 	DEMIHUMAN, # Can break down barricades.
@@ -14,7 +20,12 @@ enum Type {
 }
 
 # Dictionary for any stats that may vary from NPC to NPC.
-export var stats = {"speed": 100, "type": Type.INSTIGATOR, "in_mob": false}
+export var stats = {
+	"speed": 100, 
+	"type": Type.INSTIGATOR, 
+	"in_mob": false, 
+	"commitment": 0 #0 not committed 100 fully commited
+}
 
 # Current velocity of the NPC, used to move the NPC during _physics_process.
 # To manually move the NPC, set this instead of calling a move function directly.
@@ -25,7 +36,8 @@ func _ready():
 	# time the script is restarted, unless we call this function to
 	# generate a time-based seed.
 	randomize()
-	
+	#generate random slogans that the npc will react to
+	stats.trigger_slogans = [Slogan.keys()[randi()%len(Slogan.keys())-1], Slogan.keys()[randi()%len(Slogan.keys())-1]]
 	# When MoveTimer is triggered, the NPC should start moving.
 	# warning-ignore-all:return_value_discarded
 	$MoveTimer.connect("timeout", self, "start_move")
@@ -56,8 +68,12 @@ func get_mob():
 	var mob = get_node("../Mob")
 	return mob
 
-
+#should only be called if stats.in_mob false
 func react(message, mob):
+	if stats.trigger_slogans.find(message):
+		stats.commitment += 1
+	if stats.commitment > 10:
+		join_mob()
 	# Receive message from chant and decide if joining mob.
 	pass
 
@@ -70,11 +86,6 @@ func join_mob():
 # Call to make the NPC leave the mob.
 func leave_mob():
 	stats.in_mob = false
-
-
-# Call to make the NPC consider joining the mob.
-func consider_joining_mob():
-	pass
 
 
 func start_move():
