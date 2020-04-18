@@ -74,7 +74,6 @@ end_cap_mode = 2
 position = Vector2( 64, 0 )
 rotation = 1.5708
 shape = SubResource( 2 )
-disabled = true
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 anims/attack = SubResource( 3 )
