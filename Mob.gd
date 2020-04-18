@@ -5,10 +5,10 @@ signal mob_started_movement
 signal mob_stopped_movement
 
 # Steering vars.
-export var max_speed := 120.0
-export var slow_radius := 30.0
+export var max_speed := 120
+export var slow_radius := 30
 var _velocity := Vector2.ZERO
-const DISTANCE_THRESHOLD := 3.0
+const DISTANCE_THRESHOLD := 3
 
 var target_position: Vector2
 var track_cursor := false
