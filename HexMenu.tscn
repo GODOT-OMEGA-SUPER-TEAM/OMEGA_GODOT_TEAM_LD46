@@ -1,0 +1,141 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://HexagonShape.tres" type="Shape2D" id=1]
+[ext_resource path="res://HexMenu.gd" type="Script" id=2]
+
+[node name="HexMenu" type="Control"]
+margin_top = 16.0
+margin_right = 103.0
+margin_bottom = 129.0
+script = ExtResource( 2 )
+__meta__ = {
+"_edit_group_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="Choice0" type="Control" parent="."]
+margin_left = 31.0
+margin_top = 38.2222
+margin_right = 71.0
+margin_bottom = 74.2222
+__meta__ = {
+"_edit_group_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="Polygon2D" type="Polygon2D" parent="Choice0"]
+polygon = PoolVector2Array( 0, 18, 10, 0, 30, 0, 40, 18, 30, 36, 10, 36 )
+
+[node name="Area2D" type="Area2D" parent="Choice0"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Choice0/Area2D"]
+shape = ExtResource( 1 )
+
+[node name="Choice1" type="Control" parent="."]
+margin_left = -0.222221
+margin_top = 19.7778
+margin_right = 39.7778
+margin_bottom = 55.7778
+__meta__ = {
+"_edit_group_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="Polygon2D" type="Polygon2D" parent="Choice1"]
+polygon = PoolVector2Array( 0, 18, 10, 0, 30, 0, 40, 18, 30, 36, 10, 36 )
+
+[node name="Area2D" type="Area2D" parent="Choice1"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Choice1/Area2D"]
+shape = ExtResource( 1 )
+
+[node name="Choice2" type="Control" parent="."]
+margin_left = 30.8889
+margin_top = 1.22224
+margin_right = 69.8889
+margin_bottom = 37.2222
+__meta__ = {
+"_edit_group_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="Polygon2D" type="Polygon2D" parent="Choice2"]
+polygon = PoolVector2Array( 0, 18, 10, 0, 30, 0, 40, 18, 30, 36, 10, 36 )
+
+[node name="Area2D" type="Area2D" parent="Choice2"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Choice2/Area2D"]
+shape = ExtResource( 1 )
+
+[node name="Choice3" type="Control" parent="."]
+margin_left = 62.0
+margin_top = 19.6667
+margin_right = 100.0
+margin_bottom = 55.6667
+__meta__ = {
+"_edit_group_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="Polygon2D" type="Polygon2D" parent="Choice3"]
+polygon = PoolVector2Array( 0, 18, 10, 0, 30, 0, 40, 18, 30, 36, 10, 36 )
+
+[node name="Area2D" type="Area2D" parent="Choice3"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Choice3/Area2D"]
+shape = ExtResource( 1 )
+
+[node name="Choice4" type="Control" parent="."]
+margin_left = 62.2222
+margin_top = 56.8889
+margin_right = 102.222
+margin_bottom = 92.8889
+__meta__ = {
+"_edit_group_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="Polygon2D" type="Polygon2D" parent="Choice4"]
+polygon = PoolVector2Array( 0, 18, 10, 0, 30, 0, 40, 18, 30, 36, 10, 36 )
+
+[node name="Area2D" type="Area2D" parent="Choice4"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Choice4/Area2D"]
+shape = ExtResource( 1 )
+
+[node name="Choice5" type="Control" parent="."]
+margin_left = 31.1111
+margin_top = 75.0
+margin_right = 71.1111
+margin_bottom = 111.0
+__meta__ = {
+"_edit_group_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="Polygon2D" type="Polygon2D" parent="Choice5"]
+polygon = PoolVector2Array( 0, 18, 10, 0, 30, 0, 40, 18, 30, 36, 10, 36 )
+
+[node name="Area2D" type="Area2D" parent="Choice5"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Choice5/Area2D"]
+shape = ExtResource( 1 )
+
+[node name="Choice6" type="Control" parent="."]
+margin_left = -0.222221
+margin_top = 57.2222
+margin_right = 39.7778
+margin_bottom = 93.2222
+__meta__ = {
+"_edit_group_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="Polygon2D" type="Polygon2D" parent="Choice6"]
+polygon = PoolVector2Array( 0, 18, 10, 0, 30, 0, 40, 18, 30, 36, 10, 36 )
+
+[node name="Area2D" type="Area2D" parent="Choice6"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Choice6/Area2D"]
+shape = ExtResource( 1 )
+[connection signal="mouse_entered" from="Choice0/Area2D" to="." method="_on_Area2D_mouse_entered"]
