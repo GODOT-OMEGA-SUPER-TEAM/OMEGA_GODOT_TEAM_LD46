@@ -35,6 +35,7 @@ var type_stats = {
 }
 
 var state = States.IDLE
+var direction = "left" setget set_direction
 
 var in_mob = false
 var speed = 25
@@ -74,13 +75,16 @@ func _ready():
 	$AttackTimer.connect("timeout", self, "_on_attack_timer")
 	$Attack.connect("body_entered", self, "_on_body_entered")
 	# Each timer should start the other so the NPC alternates between moving and standing still.
-	$MoveTimer.connect("timeout", $WaitTimer, "start")
-	$WaitTimer.connect("timeout", $MoveTimer, "start")
+	
+	#$MoveTimer.connect("timeout", $WaitTimer, "start")
+	#$WaitTimer.connect("timeout", $MoveTimer, "start")
 
 	# Randomise the timers.
 	$MoveTimer.wait_time = rand_range(0.0, 2.0)
 	$WaitTimer.wait_time = rand_range(0.0, 2.0)
 	$AttackTimer.wait_time = rand_range(0.0, 2.0)
+
+	$MoveTimer.start()
 
 	#randomize initial commitment
 	commitment = round(rand_range(-10, 1))
@@ -119,6 +123,8 @@ func _physics_process(delta):
 		target,
 		speed) # Add mass for dragging.
 	velocity = move_and_slide(velocity)
+	
+	self.direction = Steering.direction_4_way(velocity.angle())
 	
 	if velocity.length() < 0.1:
 		change_state(States.IDLE)
@@ -218,7 +224,8 @@ func leave_mob():
 
 
 func start_move():
-	$WaitTimer.wait_time = rand_range(0.0, 2.0)
+	randomize()
+	$WaitTimer.wait_time = rand_range(4.0, 6.0)
 	if self.in_mob:
 		return
 
@@ -228,12 +235,15 @@ func start_move():
 	target = global_position + Vector2(cos(random_angle) * random_radius, sin(random_angle) * random_radius)
 	slow_radius = target.distance_to(global_position) / 2
 	change_state(States.RUN)
+	$WaitTimer.start()
 	#set_physics_process(true)
 
 
 func stop_move():
 	change_state(States.IDLE)
+	randomize()
 	$MoveTimer.wait_time = rand_range(4.0, 6.0) #force stop to use idle state
+	$MoveTimer.start()
 	#set_physics_process(false)
 
 
@@ -291,6 +301,14 @@ func commitment_change(damage):
 	commitment_change_instance.damage = damage
 	commitment_change_instance.position = position
 	add_child(commitment_change_instance)
+
+func set_direction(new_direction):
+	if new_direction == "up" or new_direction == "down" or new_direction == direction:
+		return
+	
+	direction = new_direction
+	$Sprite.flip_h = !$Sprite.flip_h
+	
 
 #NOT USED
 func buff(buff_range):
