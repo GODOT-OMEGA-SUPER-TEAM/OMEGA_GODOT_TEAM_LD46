@@ -13,6 +13,11 @@ enum Type {
 	# Keep types agnostic
 }
 
+enum States {
+	IDLE,
+	RUN
+}
+
 const SLOGANS = [
 	"Eggs", #placeholder
 	"Milk",
@@ -28,6 +33,8 @@ var type_stats = {
 	Type.ALCHEMIST : {"speed" : 50},
 	Type.SORCERER : {"speed" : 50},
 }
+
+var state = States.IDLE
 
 var in_mob = false
 var speed = 25
@@ -54,6 +61,7 @@ func _ready():
 	# Random number generation will always result in the same values each
 	# time the script is restarted, unless we call this function to
 	# generate a time-based seed.
+	change_state(States.IDLE)
 	randomize()
 	# Generate random slogans that the npc will react to.
 	trigger_slogans = [SLOGANS[randi() % len(SLOGANS) - 1], SLOGANS[randi() % len(SLOGANS) - 1]]
@@ -110,7 +118,13 @@ func _physics_process(delta):
 		global_position,
 		target,
 		speed) # Add mass for dragging.
-	move_and_slide(velocity)
+	velocity = move_and_slide(velocity)
+	
+	if velocity.length() < 0.1:
+		change_state(States.IDLE)
+	else: 
+		change_state(States.RUN)
+	
 	#move_and_slide((target - global_position).normalized() * 50.0)
 	if get_slide_count():
 		queue_clear_cooldown = min(queue_clear_cooldown, 0.5)
@@ -141,6 +155,16 @@ func set_stats(stats):
 	for stat in stats:
 		self[stat] = stats[stat]
 
+func change_state(new_state):
+	if new_state == state:
+		return
+	state = new_state
+	match state:
+		States.IDLE:
+			velocity = Vector2.ZERO # just to be sure
+			$SpriteAnimationPlayer.play("idle")
+		States.RUN:
+			$SpriteAnimationPlayer.play("run")
 
 #func _follow_mob():
 #	follow = true
@@ -203,11 +227,13 @@ func start_move():
 	var random_radius = (randf() * roam_radius) / 2 + roam_radius / 2
 	target = global_position + Vector2(cos(random_angle) * random_radius, sin(random_angle) * random_radius)
 	slow_radius = target.distance_to(global_position) / 2
+	change_state(States.RUN)
 	#set_physics_process(true)
 
 
 func stop_move():
-	$MoveTimer.wait_time = rand_range(0.0, 2.0)
+	change_state(States.IDLE)
+	$MoveTimer.wait_time = rand_range(4.0, 6.0) #force stop to use idle state
 	#set_physics_process(false)
 
 
