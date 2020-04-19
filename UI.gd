@@ -7,7 +7,7 @@ var ability_stack = []
 func register_ability(ability):
 	for icon in ability_stack:
 		if icon.title == ability.title:
-			icon.count += 1
+			icon.set_count(icon.count + 1)
 			return
 	for i in range(ability_stack.size()):
 		if ability_stack[i].title == "empty":

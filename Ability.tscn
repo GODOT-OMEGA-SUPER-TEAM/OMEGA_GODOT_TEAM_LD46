@@ -1,58 +1,75 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://Ability.gd" type="Script" id=1]
 [ext_resource path="res://testIcon.png" type="Texture" id=2]
 [ext_resource path="res://iconFrame.png" type="Texture" id=3]
+[ext_resource path="res://icon.png" type="Texture" id=4]
 
-[node name="Ability" type="Control"]
+[node name="Ability" type="TextureButton"]
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_right = -992.0
-margin_bottom = -568.0
+margin_right = -1860.0
+margin_bottom = -1020.0
+rect_min_size = Vector2( 120, 120 )
+texture_normal = ExtResource( 2 )
+texture_hover = ExtResource( 3 )
+expand = true
+stretch_mode = 4
 script = ExtResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Icon" type="TextureButton" parent="."]
-margin_right = 32.0
-margin_bottom = 32.0
-texture_normal = ExtResource( 2 )
-texture_hover = ExtResource( 3 )
+[node name="Cooldown" type="TextureProgress" parent="."]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+max_value = 100.0
+step = 0.01
+texture_progress = ExtResource( 2 )
+fill_mode = 3
+tint_progress = Color( 0.423529, 0.423529, 0.423529, 1 )
+nine_patch_stretch = true
+
+[node name="AbilityIcon" type="TextureRect" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -40.0
+margin_top = -40.0
+margin_right = 40.0
+margin_bottom = 40.0
+texture = ExtResource( 4 )
+expand = true
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Icon_hover" type="TextureButton" parent="."]
-margin_right = 32.0
-margin_bottom = 32.0
-texture_normal = ExtResource( 2 )
-texture_hover = ExtResource( 3 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="Cooldown" type="ColorRect" parent="."]
-margin_right = 32.0
-margin_bottom = 32.0
-mouse_filter = 2
-color = Color( 0.25098, 0.25098, 0.25098, 0.752941 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="Label" type="Label" parent="."]
-margin_left = 16.0
-margin_right = 32.0
-margin_bottom = 16.0
+[node name="Hotkey" type="Label" parent="."]
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = -27.0
+margin_right = -7.62939e-06
+margin_bottom = 31.0
 custom_colors/font_color = Color( 0, 0, 0, 1 )
+custom_constants/shadow_as_outline = 8
 text = "Z"
-align = 1
-valign = 1
+valign = 2
 uppercase = true
 __meta__ = {
 "_edit_use_anchors_": false
 }
-[connection signal="gui_input" from="." to="." method="_on_Icon_gui_input"]
-[connection signal="mouse_entered" from="." to="." method="_on_Icon_mouse_entered"]
-[connection signal="mouse_exited" from="." to="." method="_on_Icon_mouse_exited"]
+
+[node name="AbilityCount" type="Label" parent="."]
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -37.0
+margin_top = -28.0
+margin_right = -7.62939e-06
+margin_bottom = -7.62939e-06
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "x10"
+[connection signal="pressed" from="." to="." method="activate_ability"]
