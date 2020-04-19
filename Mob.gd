@@ -3,6 +3,8 @@ extends Area2D
 
 signal mob_started_movement
 signal mob_stopped_movement
+signal mob_count_changed
+signal npc_commitment_incremented
 
 # Steering vars.
 export var max_speed := 60
@@ -73,6 +75,9 @@ func chant(message):
 
 func gain_member(npc):
 	members.append(npc)
+	$"../UI".register_ability(npc.ability)
+	emit_signal("mob_count_changed", members.size())
+	emit_signal("npc_commitment_incremented", npc.commitment)
 	# warning-ignore-all:return_value_discarded 
 	#some errors going on with this
 #	connect("mob_started_movement", npc, "_follow_mob")
@@ -81,6 +86,9 @@ func gain_member(npc):
 
 
 func lose_member(npc):
+	$"../UI".remove_ability(npc.ability)
+	emit_signal("mob_count_changed", members.size())
+	emit_signal("npc_commitment_incremented", -npc.commitment)
 	#some errors going on with this
 #	disconnect("mob_started_movement", npc, "_follow_mob")
 #	disconnect("mob_stopped_movement", npc, "_unfollow_mob")

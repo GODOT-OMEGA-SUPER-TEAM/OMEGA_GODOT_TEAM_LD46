@@ -23,6 +23,15 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="Icon_hover" type="TextureButton" parent="."]
+margin_right = 32.0
+margin_bottom = 32.0
+texture_normal = ExtResource( 2 )
+texture_hover = ExtResource( 3 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [node name="Cooldown" type="ColorRect" parent="."]
 margin_right = 32.0
 margin_bottom = 32.0

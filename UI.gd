@@ -13,14 +13,15 @@ func register_ability(ability):
 		if ability_stack[i].title == "empty":
 			ability_stack[i].parse_ability(ability)
 			return
-	var i = icon.instance()
-	i.set_button(ability_stack.size())
-	i.parse_ability(ability)
-	ability_stack.insert(i)
-	$Abilities.add_child(i)
+	var ic = icon.instance()
+	ic.set_button(ability_stack.size()) # TODO
+	ic.parse_ability(ability)
+	ability_stack.append(ic)
+	$Abilities.add_child(ic)
 
 
 func remove_ability(ability):
 	for icon in ability_stack:
 		if icon.title == ability.title:
 			icon.remove_ability()
+

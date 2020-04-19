@@ -39,8 +39,8 @@ func parse_ability(ability):
 	cooldown = ability.cooldown
 	title = ability.title
 	$Icon.disabled = false
-	$Icon.texture_normal = ability.get_node("icon").texture
-	$Icon.texture_hover = ability.get_node("icon_hover").texture
+	$Icon.texture_normal = load("res://icon.png")#+ability.texture) TODO
+	$Icon.texture_hover = load("res://icon.png")#+ability.texture) TODO
 	count = 1
 	timer = 0
 
@@ -53,5 +53,6 @@ func remove_ability():
 
 
 func set_button(n):
-	$Button.text = button_names[n]
-	button_code = buttons[n]
+	$Label.text = "test" # button_names[n] TODO
+	button_code = "test" # buttons[n] TODO
+	pass

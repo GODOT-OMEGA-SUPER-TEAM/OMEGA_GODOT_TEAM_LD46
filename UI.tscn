@@ -1,6 +1,9 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://UI.gd" type="Script" id=1]
+[ext_resource path="res://ExitButton.gd" type="Script" id=2]
+[ext_resource path="res://slogan_popup.gd" type="Script" id=3]
+[ext_resource path="res://MobStatus.gd" type="Script" id=4]
 
 [node name="UI" type="CanvasLayer"]
 script = ExtResource( 1 )
@@ -20,3 +23,78 @@ margin_left = 8.0
 margin_top = 8.0
 margin_right = 1007.0
 margin_bottom = 48.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ExitButton" type="Button" parent="."]
+margin_right = 12.0
+margin_bottom = 20.0
+text = "Exit game"
+script = ExtResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Control" type="Control" parent="."]
+margin_right = 40.0
+margin_bottom = 40.0
+script = ExtResource( 3 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="GridContainer" type="GridContainer" parent="Control"]
+margin_right = 40.0
+margin_bottom = 40.0
+
+[node name="MobStatusPanel" type="Panel" parent="."]
+margin_left = 1726.0
+margin_top = 460.0
+margin_right = 1920.0
+margin_bottom = 638.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Margin" type="MarginContainer" parent="MobStatusPanel"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+custom_constants/margin_right = 5
+custom_constants/margin_top = 5
+custom_constants/margin_left = 5
+custom_constants/margin_bottom = 5
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="MobStatus" type="VBoxContainer" parent="MobStatusPanel/Margin"]
+margin_left = 5.0
+margin_top = 5.0
+margin_right = 189.0
+margin_bottom = 173.0
+script = ExtResource( 4 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Header" type="Label" parent="MobStatusPanel/Margin/MobStatus"]
+margin_top = -1.0
+margin_right = 184.0
+margin_bottom = 29.0
+rect_min_size = Vector2( 0, 30 )
+text = "Mob status"
+align = 1
+
+[node name="MobCount" type="Label" parent="MobStatusPanel/Margin/MobStatus"]
+margin_top = 34.0
+margin_right = 184.0
+margin_bottom = 48.0
+text = "Members:"
+
+[node name="MobCommitment" type="Label" parent="MobStatusPanel/Margin/MobStatus"]
+margin_top = 52.0
+margin_right = 184.0
+margin_bottom = 66.0
+text = "Mob commitment: 0"
+[connection signal="pressed" from="ExitButton" to="ExitButton" method="_on_pressed"]

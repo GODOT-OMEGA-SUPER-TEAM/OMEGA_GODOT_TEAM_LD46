@@ -22,6 +22,9 @@ collision_mask = 2
 [node name="chant_ring_collision" type="CollisionShape2D" parent="chant_ring"]
 shape = SubResource( 2 )
 
+[node name="ChantCooldown" type="Timer" parent="chant_ring"]
+wait_time = 4.0
+
 [node name="Camera2D" type="Camera2D" parent="."]
 current = true
 zoom = Vector2( 0.5, 0.5 )

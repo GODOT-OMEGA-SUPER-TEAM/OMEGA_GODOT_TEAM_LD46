@@ -15,3 +15,6 @@ anchor_bottom = 1.0
 text = "Slogan"
 align = 1
 valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}

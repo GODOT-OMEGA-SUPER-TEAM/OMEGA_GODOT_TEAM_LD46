@@ -18,15 +18,15 @@ func add_npc(position: Vector2, type):
 	npc_instance.type = type
 	npc_instance.position = position
 	add_child(npc_instance)
-	
+
 	# Crude test to make sure NPCs don't spawn on other objects.
 	npc_instance.move_and_slide(Vector2(0, 0), Vector2(0, 0))
 	while npc_instance.get_slide_count() > 0:
 		npc_instance.move_and_slide(Vector2(0, 0), Vector2(0, 0))
 		npc_instance.position = npc_instance.position + Vector2(rand_range(-10, 10), rand_range(-10, 10))
-	
-	if npc_instance.type == NPC.Type.INSTIGATOR:
-		$Mob.gain_member(new_npc)
+
+
+
 
 
 func generate_random_npcs(amount):
