@@ -18,6 +18,7 @@ func _ready():
 	
 	set_intensity(intensity)
 
+
 func set_intensity(value):
 	intensity = value
 	var track_count = tracks.size()
@@ -27,5 +28,5 @@ func set_intensity(value):
 		
 		var volume = clamp(inverse_lerp(start_intensity, end_intensity, intensity), 0.0, 1.0)
 		if players.size():
-			players[i].volume_db = 10 * log(volume) - 10 # Percent to decibel
+			players[i].volume_db = 10 * log(volume) - 10 # Percent to decibel.
 			print(str(i) + " : " + str(players[i].volume_db))

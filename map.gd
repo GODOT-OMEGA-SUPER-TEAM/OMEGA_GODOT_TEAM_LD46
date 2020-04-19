@@ -5,9 +5,9 @@ extends Node2D
 onready var level = $TestLevel
 
 func _ready():
-	# Thinking of an instagator as a NPC type that is always a mob member
-	for i in range(10):
-		#ensure that spawn is valid (currently can spawn inside tileset walls)
+	# Thinking of an instagator as a NPC type that is always a mob member.
+	for _i in range(10):
+		# Ensure that spawn is valid (currently can spawn inside tileset walls).
 		add_npc(Vector2(rand_range(-100, 100), rand_range(-100, 100)), NPC.Type.INSTIGATOR)
 	generate_random_npcs(40)
 
@@ -19,13 +19,12 @@ func add_npc(position: Vector2, type):
 	npc_instance.position = position
 	add_child(npc_instance)
 	
-	#crude test to make sure npc's dont spawn on other objects
+	# Crude test to make sure NPCs don't spawn on other objects.
 	npc_instance.move_and_slide(Vector2(0, 0), Vector2(0, 0))
 	while npc_instance.get_slide_count() > 0:
 		npc_instance.move_and_slide(Vector2(0, 0), Vector2(0, 0))
 		npc_instance.position = npc_instance.position + Vector2(rand_range(-10, 10), rand_range(-10, 10))
-		
-
+	
 	if npc_instance.type == NPC.Type.INSTIGATOR:
 		$Mob.gain_member(new_npc)
 

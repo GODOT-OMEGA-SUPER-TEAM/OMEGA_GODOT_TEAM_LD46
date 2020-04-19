@@ -64,10 +64,12 @@ func _unhandled_input(event):
 			target_position = get_global_mouse_position() # GUI will add target on objective.
 			set_process(true)
 
-#Currently chants to all npcs within outer ring area
+
+# Currently chants to all npcs within outer ring area.
 func chant(message):
 	for n in range(npcs_in_proximity.size()):
 		npcs_in_proximity[n].chant(message)
+
 
 func gain_member(npc):
 	members.append(npc)
@@ -85,14 +87,14 @@ func lose_member(npc):
 	members.erase(npc)
 
 
-#NOT USED
+# NOT USED YET
 # Changes the mobs state and acts accordingly.
 func change_state(new_state):
 	if state == "idle":
 		pass
 
 
-#NOT USED
+# NOT USED YET
 # Trigger a npc to execute a random action?
 func trigger_npc_action():
 	pass
@@ -101,7 +103,8 @@ func trigger_npc_action():
 func _on_body_entered_chant_ring(body):
 	if not npcs_in_proximity.has(body):
 		npcs_in_proximity.append(body)
-		
+
+
 func _on_body_exited_chant_ring(body):
 	if npcs_in_proximity.has(body):
 		npcs_in_proximity.remove(npcs_in_proximity.find(body))

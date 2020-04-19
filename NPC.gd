@@ -55,7 +55,11 @@ var target = Vector2.ZERO
 var roam_radius = 75
 var slow_radius = 5.5
 var arrive_distance = 35
-#var follow = false
+
+var queue_clear_cooldown = 0.0
+var mob_pathfinding_queue = []
+
+var chant_relocate_cooldown = 0.0
 
 
 func _ready():
@@ -71,7 +75,7 @@ func _ready():
 	$MoveTimer.connect("timeout", self, "start_move")
 	# When WaitTimer is triggered, the NPC should stop moving.
 	$WaitTimer.connect("timeout", self, "stop_move")
-	#when the  AttackTimer triggered check for enemeies in range and attack if can.
+	# When the  AttackTimer triggered check for enemeies in range and attack if can.
 	$AttackTimer.connect("timeout", self, "_on_attack_timer")
 	$Attack.connect("body_entered", self, "_on_body_entered")
 	# Each timer should start the other so the NPC alternates between moving and standing still.
@@ -86,23 +90,19 @@ func _ready():
 
 	$MoveTimer.start()
 
-	#randomize initial commitment
+	#Randomize initial commitment
 	commitment = round(rand_range(-10, 1))
 	# Set states for type overriding defaults.
 	set_stats(type_stats[type])
 	test_commitment()
-#	print(type," ", commitment," ", in_mob)
+	#print(type," ", commitment," ", in_mob)
 
-var queue_clear_cooldown = 0.0
-var mob_pathfinding_queue = []
-
-var chant_relocate_cooldown = 0.0
 
 # Move the NPC by whatever the velocity was set to in other functions.
 func _physics_process(delta):
 	if in_mob:
 		chant_relocate_cooldown -= delta
-		#REPLACE if npc is already inside mobs' chant_ring, they don't need to move to the exact center!
+		# REPLACE if NPC is already inside mobs' chant_ring, they don't need to move to the exact center!
 		if get_mob().npcs_in_proximity.has(self):
 			if chant_relocate_cooldown < 0.0:
 				target = get_mob().global_position + Vector2(randf() * 500.0 - 250.0, randf() * 500.0 - 250.0)
@@ -142,24 +142,23 @@ func _physics_process(delta):
 	queue_clear_cooldown -= delta
 
 	#this causes big issues
-#	if global_position.distance_to(target) < arrive_distance and not follow:
-#		set_physics_process(false)
-#		$MoveTimer.start()
+	#if global_position.distance_to(target) < arrive_distance and not follow:
+		#set_physics_process(false)
+		#$MoveTimer.start()
 		# Set up timer and wander when not in_mob or for in_mob but with distance to mob larger than x.
 
 
-func _process(delta):
+func _process(_delta):
 	$Label.text = str(commitment)
 	if in_mob:
 		$TempSprite.default_color = Color(.2, .9, .2)
-
-	if not in_mob:
+	else:
 		$TempSprite.default_color = Color(.2, .2, .2)
 
 
-func set_stats(stats):
-	for stat in stats:
-		self[stat] = stats[stat]
+func set_stats(new_stats):
+	for stat in new_stats:
+		self[stat] = new_stats[stat]
 
 func change_state(new_state):
 	if new_state == state:
@@ -200,7 +199,7 @@ func chant(message):
 func react(message, mob):
 	if trigger_slogans.find(message):
 		commitment_change(2)
-#		print(name + " has increased his commitment to " + str(commitment))
+		#print(name + " has increased his commitment to " + str(commitment))
 	else:
 		commitment_change(-1)
 
@@ -264,6 +263,7 @@ func _on_attack_timer():
 	$AttackTimer.wait_time = rand_range(1.0, 2.0)
 	$AttackTimer.start()
 
+
 func _on_body_entered(body):
 	var damage = -1
 	if body.get("in_mob") == null:
@@ -274,12 +274,13 @@ func _on_body_entered(body):
 		damage = 1
 		if commitment > 0:
 			return
-	elif body.commitment > 0: #not in mob, indifferent
+	elif body.commitment > 0: # Not in mob, indifferent.
 		return
-	#otherwise not in mob and against it
+	# Otherwise not in mob and against it.
 
 	attack_vector(body.position - position)
 	body._on_attacked(damage) # Use specific NPC damage.
+
 
 func _on_attacked(damage):
 	commitment_change(-damage)
@@ -293,6 +294,7 @@ func test_commitment():
 		if not in_mob:
 			join_mob()
 
+
 func commitment_change(damage):
 	commitment += damage
 	test_commitment()
@@ -302,14 +304,14 @@ func commitment_change(damage):
 	commitment_change_instance.position = position
 	add_child(commitment_change_instance)
 
+
 func set_direction(new_direction):
 	if new_direction == "up" or new_direction == "down" or new_direction == direction:
 		return
 	
 	direction = new_direction
 	$Sprite.flip_h = !$Sprite.flip_h
-	
 
-#NOT USED
+# NOT USED YET
 func buff(buff_range):
 	pass

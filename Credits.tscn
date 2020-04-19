@@ -18,8 +18,8 @@ __meta__ = {
 }
 
 [node name="Label" type="Label" parent="VBoxContainer"]
-margin_right = 640.0
-margin_bottom = 336.0
+margin_right = 1920.0
+margin_bottom = 1056.0
 size_flags_vertical = 3
 text = "who made dis"
 align = 1
@@ -29,9 +29,9 @@ __meta__ = {
 }
 
 [node name="BackButton" type="Button" parent="VBoxContainer"]
-margin_top = 340.0
-margin_right = 640.0
-margin_bottom = 360.0
+margin_top = 1060.0
+margin_right = 1920.0
+margin_bottom = 1080.0
 text = "Back"
 __meta__ = {
 "_edit_use_anchors_": false
