@@ -50,7 +50,7 @@ var type_stats = {
 }
 
 var state = States.IDLE
-var direction = "left" setget set_direction
+#var direction = "left" setget set_direction
 
 var type_abilities  = {
 	Type.INSTIGATOR : {"title" : "AbilityA", "cooldown" : 5, "texture":""},
@@ -95,11 +95,9 @@ func _ready():
 	randomize()
 	# Generate random slogans that the npc will react to.
 	trigger_slogans = [SLOGANS[randi() % len(SLOGANS) - 1], SLOGANS[randi() % len(SLOGANS) - 1]]
-	# When MoveTimer is triggered, the NPC should start moving.
+	# Timer for generating new wander positions for non-mob members
 	# warning-ignore-all:return_value_discarded
-	$MoveTimer.connect("timeout", self, "start_move")
-	# When WaitTimer is triggered, the NPC should stop moving.
-	$WaitTimer.connect("timeout", self, "stop_move")
+	$WanderTimer.connect("timeout", self, "set_new_roam_target")
 	# When the  AttackTimer triggered check for enemeies in range and attack if can.
 	$AttackTimer.connect("timeout", self, "_on_attack_timer")
 	$Attack.connect("body_entered", self, "_on_body_entered")
@@ -109,11 +107,10 @@ func _ready():
 	#$WaitTimer.connect("timeout", $MoveTimer, "start")
 
 	# Randomise the timers.
-	$MoveTimer.wait_time = rand_range(0.0, 2.0)
-	$WaitTimer.wait_time = rand_range(0.0, 2.0)
+	$WanderTimer.wait_time = rand_range(0, 2.0)
 	$AttackTimer.wait_time = rand_range(0.0, 2.0)
 
-	$MoveTimer.start()
+	$WanderTimer.start()
 
 	# Randomize initial commitment.
 	commitment = round(rand_range(-10, 1))
@@ -121,6 +118,7 @@ func _ready():
 	# Set states for type overriding defaults.
 	set_stats(type_stats[type])
 	test_commitment()
+	set_new_roam_target()
 	#print(type," ", commitment," ", in_mob)
 
 
@@ -128,14 +126,19 @@ func _ready():
 func _physics_process(delta):
 	if in_mob:
 		chant_relocate_cooldown -= delta
+		
 		# REPLACE if NPC is already inside mobs' chant_ring, they don't need to move to the exact center!
+		# Wander randomly inside the mob's radius if he's near the mob
 		if get_mob().npcs_in_proximity.has(self):
 			if chant_relocate_cooldown < 0.0:
 				target = get_mob().global_position + Vector2(randf() * 500.0 - 250.0, randf() * 500.0 - 250.0)
 				chant_relocate_cooldown = 0.5
+		# Pathfind to the mob if the npc is far away from it
 		else:
-			while mob_pathfinding_queue.size() and mob_pathfinding_queue[0].distance_squared_to(global_position) < 5 * 5:
+			# Clean path nodes that are close to the npc
+			while mob_pathfinding_queue.size() and mob_pathfinding_queue[0].distance_squared_to(global_position) < 4 * 4:
 				mob_pathfinding_queue.remove(0)
+			
 			if mob_pathfinding_queue.size():
 				target = mob_pathfinding_queue[0]
 				#global_position = global_position.move_toward(target, 1.0)
@@ -143,6 +146,11 @@ func _physics_process(delta):
 				#print(target)
 			else:
 				mob_pathfinding_queue = get_tree().current_scene.get_simple_path(global_position, get_mob().global_position)
+	
+	# If the NPC is close to his target, then reset his target
+	if target.distance_squared_to(global_position) < 1:
+		target = global_position
+	
 	velocity = Steering.arrive_to(
 		velocity,
 		global_position,
@@ -150,9 +158,13 @@ func _physics_process(delta):
 		speed) # Add mass for dragging.
 	velocity = move_and_slide(velocity)
 
-	self.direction = Steering.direction_4_way(velocity.angle())
+	#self.direction = Steering.direction_4_way(velocity.angle())
+	
+	# The char is originally looking to the left
+	# So flip him when his velocity is pointing to the right
+	$Sprite.flip_h = velocity.x > 0
 
-	if velocity.length() < 0.1:
+	if velocity.length() < 0.7:
 		change_state(States.IDLE)
 	else:
 		change_state(States.RUN)
@@ -247,29 +259,42 @@ func leave_mob():
 	self.in_mob = false
 	$TempSprite.default_color = "6680ff" # temp
 
-
-func start_move():
-	randomize()
-	$WaitTimer.wait_time = rand_range(4.0, 6.0)
+# This generates a new position for when the NPC is roaming
+func set_new_roam_target():
+	# Mob members don't wander
 	if self.in_mob:
 		return
-
+	
 	randomize()
 	var random_angle = randf() * TAU
 	var random_radius = (randf() * roam_radius) / 2 + roam_radius / 2
 	target = global_position + Vector2(cos(random_angle) * random_radius, sin(random_angle) * random_radius)
 	slow_radius = target.distance_to(global_position) / 2
-	change_state(States.RUN)
-	$WaitTimer.start()
-	#set_physics_process(true)
+	
+	$WanderTimer.wait_time = rand_range(2, 4)
+	$WanderTimer.start()
 
 
-func stop_move():
-	change_state(States.IDLE)
-	randomize()
-	$MoveTimer.wait_time = rand_range(4.0, 6.0) # Force stop to use idle state.
-	$MoveTimer.start()
-	#set_physics_process(false)
+#func start_move():
+#	if self.in_mob:
+#		return
+#
+#	randomize()
+#	var random_angle = randf() * TAU
+#	var random_radius = (randf() * roam_radius) / 2 + roam_radius / 2
+#	target = global_position + Vector2(cos(random_angle) * random_radius, sin(random_angle) * random_radius)
+#	slow_radius = target.distance_to(global_position) / 2
+#	change_state(States.RUN)
+#	set_physics_process(true)
+
+#
+#func stop_move():
+#	target = global_position
+#	change_state(States.IDLE)
+#	randomize()
+#	$MoveTimer.wait_time = rand_range(4.0, 6.0) # Force stop to use idle state.
+#	$MoveTimer.start()
+#	#set_physics_process(false)
 
 
 # Begin an attack at the specified angle in radians.
@@ -333,12 +358,12 @@ func commitment_change(damage):
 	add_child(commitment_change_instance)
 
 
-func set_direction(new_direction):
-	if new_direction == "up" or new_direction == "down" or new_direction == direction:
-		return
-
-	direction = new_direction
-	$Sprite.flip_h = !$Sprite.flip_h
+#func set_direction(new_direction):
+#	if new_direction == "up" or new_direction == "down" or new_direction == direction:
+#		return
+#
+#	direction = new_direction
+#	$Sprite.flip_h = !$Sprite.flip_h
 
 
 func set_type(new_type):

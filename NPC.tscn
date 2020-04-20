@@ -92,14 +92,6 @@ end_cap_mode = 2
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource( 1 )
 
-[node name="MoveTimer" type="Timer" parent="."]
-wait_time = 2.0
-one_shot = true
-autostart = true
-
-[node name="WaitTimer" type="Timer" parent="."]
-one_shot = true
-
 [node name="Attack" type="Area2D" parent="."]
 visible = false
 
@@ -140,6 +132,11 @@ frame = 2
 [node name="SpriteAnimationPlayer" type="AnimationPlayer" parent="."]
 anims/idle = SubResource( 4 )
 anims/run = SubResource( 5 )
+
+[node name="WanderTimer" type="Timer" parent="."]
+wait_time = 2.0
+one_shot = true
+autostart = true
 
 [node name="CommitmentTimer" type="Timer" parent="."]
 wait_time = 15.0
