@@ -62,9 +62,10 @@ func _unhandled_input(event):
 	# Mouse steering.
 	if event is InputEventMouseButton:
 		if event.is_action_pressed("click"): # Follow cursor.
-			track_cursor = true
-			set_process(true)
-			emit_signal("mob_started_movement")
+			position = get_global_mouse_position()
+			#track_cursor = true
+			#set_process(true)
+			#emit_signal("mob_started_movement")
 		if event.is_action_released("click"): # Reach click point.
 			# A target object may be placed on map upon mouse release.
 			track_cursor = false
