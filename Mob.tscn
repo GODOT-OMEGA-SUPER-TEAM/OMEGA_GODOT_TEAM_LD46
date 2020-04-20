@@ -29,6 +29,10 @@ wait_time = 4.0
 [node name="Camera2D" type="Camera2D" parent="."]
 current = true
 zoom = Vector2( 0.5, 0.5 )
+limit_left = -640
+limit_top = -368
+limit_right = 640
+limit_bottom = 336
 smoothing_enabled = true
 smoothing_speed = 0.5
 
