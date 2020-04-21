@@ -9,5 +9,5 @@
 
 [node name="MusicManager" type="Node"]
 script = ExtResource( 1 )
-intensity = 1.0
+intensity = 0.5
 tracks = [ ExtResource( 2 ), ExtResource( 3 ), ExtResource( 4 ), ExtResource( 5 ), ExtResource( 6 ) ]

@@ -1,8 +1,53 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://Start.gd" type="Script" id=1]
+[ext_resource path="res://ChaussonCFBold-Bold.otf" type="DynamicFontData" id=2]
+[ext_resource path="res://TitleRotate.gd" type="Script" id=3]
 
-[node name="Start" type="Control"]
+[sub_resource type="Shader" id=2]
+code = "shader_type canvas_item;
+
+void vertex() {
+	vec2 a = VERTEX.xy - vec2(850.0 / 2.0, 192.0 / 2.0);
+	a *= pow(1.0 - mod(TIME - 0.05, 0.5) * 0.05, 2.0);
+	VERTEX.xy = a + vec2(850.0 / 2.0, 192.0 / 2.0);
+}
+"
+
+[sub_resource type="ShaderMaterial" id=3]
+shader = SubResource( 2 )
+
+[sub_resource type="DynamicFont" id=1]
+size = 160
+font_data = ExtResource( 2 )
+
+[sub_resource type="StyleBoxFlat" id=6]
+content_margin_left = 32.0
+content_margin_right = 32.0
+content_margin_top = 4.0
+content_margin_bottom = 4.0
+bg_color = Color( 0.32549, 0.678431, 0, 1 )
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+
+[sub_resource type="StyleBoxFlat" id=4]
+content_margin_left = 32.0
+content_margin_right = 32.0
+content_margin_top = 4.0
+content_margin_bottom = 4.0
+bg_color = Color( 0.0470588, 0.454902, 0, 1 )
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+
+[sub_resource type="DynamicFont" id=5]
+size = 64
+font_data = ExtResource( 2 )
+
+[node name="Start" type="CenterContainer"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
@@ -12,60 +57,90 @@ __meta__ = {
 }
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-margin_left = -61.0
-margin_top = -55.5
-margin_right = 61.0
-margin_bottom = 55.5
+margin_left = 215.0
+margin_top = 125.0
+margin_right = 1065.0
+margin_bottom = 595.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="Label" type="Label" parent="VBoxContainer"]
-margin_right = 122.0
-margin_bottom = 39.0
+material = SubResource( 3 )
+margin_right = 850.0
+margin_bottom = 192.0
 size_flags_vertical = 3
-text = "untitled mob game"
+custom_fonts/font = SubResource( 1 )
+text = "Untitled Mob Game"
 align = 1
 valign = 1
+script = ExtResource( 3 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer"]
-margin_top = 43.0
-margin_right = 122.0
-margin_bottom = 111.0
+margin_top = 196.0
+margin_right = 850.0
+margin_bottom = 470.0
 size_flags_vertical = 3
+custom_constants/separation = 8
 alignment = 1
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="StartButton" type="Button" parent="VBoxContainer/VBoxContainer"]
-margin_right = 122.0
-margin_bottom = 20.0
+margin_left = 348.0
+margin_right = 502.0
+margin_bottom = 86.0
+mouse_default_cursor_shape = 2
+size_flags_horizontal = 4
+custom_styles/hover = SubResource( 6 )
+custom_styles/pressed = SubResource( 4 )
+custom_styles/focus = SubResource( 4 )
+custom_styles/disabled = SubResource( 4 )
+custom_styles/normal = SubResource( 4 )
+custom_fonts/font = SubResource( 5 )
+custom_colors/font_color = Color( 1, 1, 1, 1 )
 text = "Start"
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="CreditsButton" type="Button" parent="VBoxContainer/VBoxContainer"]
-margin_top = 24.0
-margin_right = 122.0
-margin_bottom = 44.0
+margin_left = 328.0
+margin_top = 94.0
+margin_right = 521.0
+margin_bottom = 180.0
+mouse_default_cursor_shape = 2
+size_flags_horizontal = 4
+custom_styles/hover = SubResource( 6 )
+custom_styles/pressed = SubResource( 4 )
+custom_styles/focus = SubResource( 4 )
+custom_styles/disabled = SubResource( 4 )
+custom_styles/normal = SubResource( 4 )
+custom_fonts/font = SubResource( 5 )
+custom_colors/font_color = Color( 1, 1, 1, 1 )
 text = "Credits"
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="QuitButton" type="Button" parent="VBoxContainer/VBoxContainer"]
-margin_top = 48.0
-margin_right = 122.0
-margin_bottom = 68.0
+margin_left = 357.0
+margin_top = 188.0
+margin_right = 492.0
+margin_bottom = 274.0
+mouse_default_cursor_shape = 2
+size_flags_horizontal = 4
+custom_styles/hover = SubResource( 6 )
+custom_styles/pressed = SubResource( 4 )
+custom_styles/focus = SubResource( 4 )
+custom_styles/disabled = SubResource( 4 )
+custom_styles/normal = SubResource( 4 )
+custom_fonts/font = SubResource( 5 )
+custom_colors/font_color = Color( 1, 1, 1, 1 )
 text = "Quit"
 __meta__ = {
 "_edit_use_anchors_": false
