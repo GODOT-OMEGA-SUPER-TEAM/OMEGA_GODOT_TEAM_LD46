@@ -122,8 +122,11 @@ func _ready():
 	#print(type," ", commitment," ", in_mob)
 
 
+var pathfinding_cooldown = 0.0
+
 # Move the NPC by whatever the velocity was set to in other functions.
 func _physics_process(delta):
+	pathfinding_cooldown -= delta
 	if in_mob:
 		chant_relocate_cooldown -= delta
 		
@@ -141,10 +144,8 @@ func _physics_process(delta):
 			
 			if mob_pathfinding_queue.size():
 				target = mob_pathfinding_queue[0]
-				#global_position = global_position.move_toward(target, 1.0)
-				#move_and_slide((target - global_position).normalized() * 500.0)
-				#print(target)
-			else:
+			elif pathfinding_cooldown < 0.0:
+				pathfinding_cooldown = 0.3
 				mob_pathfinding_queue = get_tree().current_scene.get_simple_path(global_position, get_mob().global_position)
 	
 	# If the NPC is close to his target, then reset his target
